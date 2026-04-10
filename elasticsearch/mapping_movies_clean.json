@@ -1,0 +1,136 @@
+PUT /movies_clean
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "analysis": {
+      "filter": {
+        "movie_stop": {
+          "type": "stop",
+          "stopwords": "_english_"
+        },
+        "movie_stemmer": {
+          "type": "stemmer",
+          "language": "english"
+        },
+        "edge_ngram_filter": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 20
+        }
+      },
+      "analyzer": {
+        "movie_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "movie_stop",
+            "movie_stemmer"
+          ]
+        },
+        "autocomplete_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "edge_ngram_filter"
+          ]
+        },
+        "search_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase", "asciifolding"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "text",
+        "analyzer": "movie_analyzer",
+        "search_analyzer": "search_analyzer",
+        "fields": {
+          "keyword": { "type": "keyword" },
+          "autocomplete": {
+            "type": "text",
+            "analyzer": "autocomplete_analyzer",
+            "search_analyzer": "search_analyzer"
+          }
+        }
+      },
+      "overview": {
+        "type": "text",
+        "analyzer": "movie_analyzer",
+        "search_analyzer": "search_analyzer"
+      },
+      "tagline": {
+        "type": "text",
+        "analyzer": "movie_analyzer"
+      },
+      "genres": {
+        "type": "keyword"
+      },
+      "original_language": {
+        "type": "keyword"
+      },
+      "status": {
+        "type": "keyword"
+      },
+      "release_date": {
+        "type": "date",
+        "format": "strict_date_optional_time||yyyy-MM-dd"
+      },
+      "popularity": {
+        "type": "float"
+      },
+      "vote_average": {
+        "type": "float"
+      },
+      "vote_count": {
+        "type": "integer"
+      },
+      "budget": {
+        "type": "long"
+      },
+      "revenue": {
+        "type": "long"
+      },
+      "runtime": {
+        "type": "integer"
+      },
+      "credits": {
+        "type": "keyword"
+      },
+      "keywords": {
+        "type": "keyword"
+      },
+      "production_companies": {
+        "type": "keyword"
+      },
+      "poster_path": {
+        "type": "keyword",
+        "index": false
+      },
+      "backdrop_path": {
+        "type": "keyword",
+        "index": false
+      },
+      "recommendations": {
+        "type": "keyword"
+      },
+      "data_quality_issues": {
+        "type": "keyword"
+      },
+      "data_quality_score": {
+        "type": "integer"
+      }
+    }
+  }
+}

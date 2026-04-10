@@ -1,0 +1,23 @@
+# Dataset (trop lourd pour Git)
+DATA/
+*.csv
+
+# Logs Logstash
+logs/
+
+# Volumes Docker
+.docker/
+
+# Kibana export (généré localement)
+# docs/kibana_export.ndjson  ← décommenter si tu veux l'ignorer
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Environnement
+.env
