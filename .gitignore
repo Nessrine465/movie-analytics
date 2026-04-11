@@ -1,0 +1,10 @@
+cat > .gitignore <<'EOF'
+.DS_Store
+.env
+logs/
+*.log
+__pycache__/
+*.pyc
+node_modules/
+DATA/movies.csv
+EOF
