@@ -1,4 +1,4 @@
-# Movies Data Platform
+# Movie-analytics
 
 Projet d’analyse de films avec la stack ELK.
 
