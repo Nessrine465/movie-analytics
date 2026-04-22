@@ -5,11 +5,13 @@ Ce fichier contient les principales requêtes Elasticsearch utilisées sur l’i
 ## 1. Compter le nombre de documents
 Permet de connaître le nombre total de films dans l’index nettoyé.
 
+```json
 GET movies_clean/_count 
-
+```
 ## 2. Afficher un échantillon de documents
 Affiche quelques documents pour vérifier la structure des données.  
 
+```json
 GET movies_clean/_search
 {
   "size": 5,
@@ -22,10 +24,11 @@ GET movies_clean/_search
     "popularity"
   ]
 }
-
+```
 ## 3. Top 10 des films les plus populaires
 Retourne les 10 films ayant la plus grande popularité.
 
+```json
 GET movies_clean/_search
 {
   "size": 10,
@@ -39,10 +42,11 @@ GET movies_clean/_search
     "original_language"
   ]
 }
-
+```
 ## 4. Films les mieux notés avec au moins 100 votes
 Permet d’éviter les films peu notés avec peu de votes.
 
+```json
 GET movies_clean/_search
 {
   "size": 10,
@@ -63,10 +67,11 @@ GET movies_clean/_search
     "release_date"
   ]
 }
-
+```
 ## 5. Films en anglais sortis après 2015
 Filtre les films en anglais sortis après 2015.
 
+```json
 GET movies_clean/_search
 {
   "size": 10,
@@ -90,10 +95,11 @@ GET movies_clean/_search
     "original_language"
   ]
 }
-
+```
 ## 6. Films sortis après 2010 avec popularité >= 1
 Permet de récupérer des films récents avec une popularité minimale.
 
+```json
 GET movies_clean/_search
 {
   "size": 10,
@@ -129,10 +135,11 @@ GET movies_clean/_search
     }
   ]
 }
-
+```
 ## 7. Films documentaires ou historiques en français ou anglais
 Recherche des films selon la langue et le genre.
 
+```json
 GET movies_clean/_search
 {
   "size": 10,
@@ -158,10 +165,11 @@ GET movies_clean/_search
     "original_language"
   ]
 }
-
+```
 ## 8. Films avec overview présent mais sans tagline
 Permet d’identifier des données incomplètes.
 
+```json
 GET movies_clean/_search
 {
   "size": 10,
@@ -181,10 +189,11 @@ GET movies_clean/_search
     "tagline"
   ]
 }
-
+```
 ## 9. Films avec budget > 1 000 000 et revenue = 0
 Permet de détecter des anomalies dans les données financières.
 
+```json
 GET movies_clean/_search
 {
   "size": 10,
@@ -213,10 +222,12 @@ GET movies_clean/_search
     "release_date"
   ]
 }
+```
 
 ## 10. Top des langues
 Permet de voir les langues les plus présentes dans le dataset.
 
+```json
 GET movies_clean/_search
 {
   "size": 0,
@@ -229,10 +240,11 @@ GET movies_clean/_search
     }
   }
 }
-
+```
 ## 11. Nombre de films par statut
 Permet de visualiser la répartition des films selon leur statut.
 
+```json
 GET movies_clean/_search
 {
   "size": 0,
@@ -245,10 +257,11 @@ GET movies_clean/_search
     }
   }
 }
-
+```
 ## 12. Moyenne des notes par langue
 Permet d’analyser la qualité moyenne des films selon la langue.
 
+```json
 GET movies_clean/_search
 {
   "size": 0,
@@ -268,3 +281,8 @@ GET movies_clean/_search
     }
   }
 }
+```
+## Conclusion
+
+Ces requêtes permettent d’explorer, filtrer et analyser les données de l’index `movies_clean`.  
+Elles couvrent des cas simples de recherche, des filtres booléens et des agrégations utiles pour l’analyse dans Elasticsearch et Kibana.
