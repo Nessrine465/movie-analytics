@@ -20,3 +20,22 @@ Depuis le dossier du projet :
 
 ```bash
 docker-compose up
+```
+## Vérifier que les services fonctionnent
+Vérifier les conteneurs :
+
+```bash
+docker compose ps
+```
+- Vérifier Elasticsearch : http://localhost:9200
+- Vérifier Kibana : http://localhost:5601
+
+## Arrêter la stack
+Depuis le dossier du projet :
+
+```bash
+docker-compose up
+
+
+
+
