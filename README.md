@@ -37,10 +37,3 @@ Depuis le dossier du projet :
 ```bash
 docker compose down
 ```
-
-<<<<<<< Updated upstream
-
-
-
-=======
->>>>>>> Stashed changes
