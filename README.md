@@ -14,6 +14,7 @@ Projet d’analyse de films avec la stack ELK.
 - créer un index brut `movies_raw`
 - nettoyer les données pour créer `movies_clean`
 - produire des visualisations dans Kibana
+- faire un mini moteur de recherche
 
 ## Lancement du projet
 Depuis le dossier du projet :
