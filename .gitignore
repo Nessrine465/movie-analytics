@@ -1,4 +1,3 @@
-cat > .gitignore <<'EOF'
 .DS_Store
 .env
 logs/
@@ -7,4 +6,4 @@ __pycache__/
 *.pyc
 node_modules/
 DATA/movies.csv
-EOF
+
