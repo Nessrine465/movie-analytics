@@ -38,6 +38,9 @@ Depuis le dossier du projet :
 docker compose down
 ```
 
+<<<<<<< Updated upstream
 
 
 
+=======
+>>>>>>> Stashed changes
