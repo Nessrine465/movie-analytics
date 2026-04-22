@@ -20,7 +20,7 @@ Projet d’analyse de films avec la stack ELK.
 Depuis le dossier du projet :
 
 ```bash
-docker-compose up
+docker compose up -d
 ```
 ## Vérifier que les services fonctionnent
 Vérifier les conteneurs :
@@ -35,7 +35,7 @@ docker compose ps
 Depuis le dossier du projet :
 
 ```bash
-docker-compose up
+docker compose down
 ```
 
 
