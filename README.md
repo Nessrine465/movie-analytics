@@ -36,7 +36,7 @@ Depuis le dossier du projet :
 
 ```bash
 docker-compose up
-
+```
 
 
 
