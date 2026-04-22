@@ -1,8 +1,23 @@
-.DS_Store
-.env
+# Dataset (trop lourd pour Git)
+DATA/
+*.csv
+
+# Logs Logstash
 logs/
-*.log
-__pycache__/
-*.pyc
-node_modules/
-DATA/movies.csv
+
+# Volumes Docker
+.docker/
+
+# Kibana export (généré localement)
+# docs/kibana_export.ndjson  ← décommenter si tu veux l'ignorer
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Environnement
+.env
