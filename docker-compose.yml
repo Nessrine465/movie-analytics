@@ -22,7 +22,7 @@ services:
     image: docker.elastic.co/logstash/logstash:8.11.0
     container_name: logstash
     volumes:
-      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline:ro
       - ./DATA:/data:ro
     depends_on:
       - elasticsearch
