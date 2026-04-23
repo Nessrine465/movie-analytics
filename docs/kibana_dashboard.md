@@ -163,6 +163,8 @@ Pour importer le dashboard :
 - Le dashboard dépend directement de la qualité des données dans `movies_clean`
 - Certaines visualisations peuvent être enrichies avec des filtres ou des agrégations supplémentaires
 - Les descriptions ajoutées dans Kibana facilitent l’interprétation des graphiques
+- Ce dashboard nécessite que l’index `movies_clean` soit préalablement créé.
+- Les étapes complètes d’installation et d’ingestion des données sont décrites dans le fichier `runbook.md`.
 
 ---
 
