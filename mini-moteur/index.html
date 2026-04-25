@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎬 Movie Search</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; min-height: 100vh; }
+    header { background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 30px 20px; text-align: center; border-bottom: 2px solid #e50914; }
+    header h1 { font-size: 2rem; color: #fff; }
+    header h1 span { color: #e50914; }
+    header p { color: #aaa; margin-top: 6px; }
+    .search-box { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+    .search-row { display: flex; gap: 10px; margin-bottom: 14px; }
+    input, select { background: #1e1e2e; border: 1px solid #333; border-radius: 8px; color: #fff; padding: 12px 16px; font-size: 15px; outline: none; }
+    input:focus, select:focus { border-color: #e50914; }
+    #query { flex: 1; }
+    .filters { display: flex; gap: 10px; flex-wrap: wrap; }
+    .filters select, .filters input { flex: 1; min-width: 140px; }
+    button { background: #e50914; color: #fff; border: none; border-radius: 8px; padding: 12px 28px; font-size: 16px; cursor: pointer; font-weight: bold; }
+    button:hover { background: #b0060f; }
+    #stats { max-width: 900px; margin: 0 auto 10px; padding: 0 20px; color: #888; font-size: 14px; }
+    .results { max-width: 900px; margin: 0 auto; padding: 0 20px 40px; display: grid; gap: 16px; }
+    .card { background: #1a1a2e; border-radius: 12px; padding: 18px 20px; border: 1px solid #2a2a3e; display: flex; gap: 16px; }
+    .card:hover { border-color: #e50914; }
+    .card img { width: 70px; height: 100px; object-fit: cover; border-radius: 6px; background: #333; flex-shrink: 0; }
+    .card-body { flex: 1; }
+    .card-title { font-size: 1.1rem; font-weight: bold; color: #fff; margin-bottom: 4px; }
+    .card-meta { font-size: 13px; color: #888; margin-bottom: 8px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .badge { background: #2a2a3e; border-radius: 20px; padding: 2px 10px; font-size: 12px; color: #ccc; margin: 2px; display: inline-block; }
+    .overview { font-size: 13px; color: #aaa; margin-top: 8px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .score { background: #e50914; color: #fff; border-radius: 6px; padding: 3px 8px; font-weight: bold; font-size: 14px; }
+    #empty { text-align: center; color: #555; margin-top: 60px; font-size: 18px; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>🎬 Movie <span>Search</span></h1>
+  <p>Moteur de recherche connecté à Elasticsearch — Movies Data Platform</p>
+</header>
+<div class="search-box">
+  <div class="search-row">
+    <input type="text" id="query" placeholder="Rechercher un film (titre, description...)..." />
+    <button onclick="search()">Rechercher</button>
+  </div>
+  <div class="filters">
+    <select id="lang">
+      <option value="">🌍 Toutes les langues</option>
+      <option value="en">🇬🇧 Anglais</option>
+      <option value="fr">🇫🇷 Français</option>
+      <option value="es">🇪🇸 Espagnol</option>
+      <option value="de">🇩🇪 Allemand</option>
+      <option value="ja">🇯🇵 Japonais</option>
+      <option value="ko">🇰🇷 Coréen</option>
+    </select>
+    <select id="genre">
+      <option value="">🎭 Tous les genres</option>
+      <option value="Action">Action</option>
+      <option value="Comedy">Comédie</option>
+      <option value="Drama">Drame</option>
+      <option value="Horror">Horreur</option>
+      <option value="Science Fiction">Science-Fiction</option>
+      <option value="Romance">Romance</option>
+      <option value="Thriller">Thriller</option>
+      <option value="Animation">Animation</option>
+      <option value="Documentary">Documentaire</option>
+    </select>
+    <input type="number" id="yearMin" placeholder="Année min" min="1900" max="2025" />
+    <input type="number" id="yearMax" placeholder="Année max" min="1900" max="2025" />
+    <select id="sortBy">
+      <option value="popularity">🔥 Popularité</option>
+      <option value="vote_average">⭐ Note</option>
+      <option value="release_date">📅 Date</option>
+    </select>
+  </div>
+</div>
+<div id="stats"></div>
+<div class="results" id="results">
+  <div id="empty">Saisissez une recherche pour commencer 🎬</div>
+</div>
+<script>
+  const ES = 'http://localhost:9201';
+
+  document.getElementById('query').addEventListener('keydown', e => {
+    if (e.key === 'Enter') search();
+  });
+
+  async function search() {
+    const q      = document.getElementById('query').value.trim();
+    const lang   = document.getElementById('lang').value;
+    const genre  = document.getElementById('genre').value;
+    const yMin   = document.getElementById('yearMin').value;
+    const yMax   = document.getElementById('yearMax').value;
+    const sortBy = document.getElementById('sortBy').value;
+
+    const must = q
+      ? [{ multi_match: { query: q, fields: ['title^3','overview','keywords'], fuzziness: 'AUTO' } }]
+      : [{ match_all: {} }];
+
+    const filter = [];
+    if (lang)  filter.push({ term: { original_language: lang } });
+    if (genre) filter.push({ term: { genres: genre } });
+    if (yMin || yMax) {
+      const r = {};
+      if (yMin) r.gte = yMin + '-01-01';
+      if (yMax) r.lte = yMax + '-12-31';
+      filter.push({ range: { release_date: r } });
+    }
+
+    document.getElementById('results').innerHTML = '<div id="empty">⏳ Recherche en cours...</div>';
+    document.getElementById('stats').textContent = '';
+
+    try {
+      const res = await fetch(ES + '/movies_clean/_search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: { bool: { must, filter } },
+          sort: [{ [sortBy]: { order: 'desc' } }],
+          size: 20,
+          _source: ['title','overview','vote_average','release_date','genres','original_language','popularity','poster_path','runtime']
+        })
+      });
+      const data = await res.json();
+      render(data);
+    } catch (err) {
+      document.getElementById('results').innerHTML =
+        '<div id="empty">❌ Impossible de joindre Elasticsearch.<br><small>' + err.message + '</small></div>';
+    }
+  }
+
+  function render(data) {
+    const hits  = data.hits?.hits || [];
+    const total = data.hits?.total?.value || 0;
+    document.getElementById('stats').textContent =
+      total.toLocaleString() + ' résultat(s) — affichage des ' + hits.length + ' premiers';
+    if (!hits.length) {
+      document.getElementById('results').innerHTML = '<div id="empty">😕 Aucun résultat.</div>';
+      return;
+    }
+    document.getElementById('results').innerHTML = hits.map(h => {
+      const s = h._source;
+      const year = s.release_date ? s.release_date.slice(0,4) : '?';
+const genres = (Array.isArray(s.genres) ? s.genres : []).slice(0,4).map(g=>'<span class="badge">'+g+'</span>').join('');
+        ? 'https://image.tmdb.org/t/p/w92'+s.poster_path
+        : 'https://placehold.co/70x100?text=N/A';
+      return '<div class="card">' +
+        '<img src="'+poster+'" alt="'+s.title+'" onerror="this.src=\'https://placehold.co/70x100?text=N/A\'" />' +
+        '<div class="card-body">' +
+          '<div class="card-title">'+s.title+'</div>' +
+          '<div class="card-meta">' +
+            '<span>📅 '+year+'</span>' +
+            (s.vote_average ? '<span class="score">⭐ '+s.vote_average.toFixed(1)+'</span>' : '') +
+            '<span>🔥 '+(s.popularity||0).toFixed(0)+'</span>' +
+            '<span>🌐 '+(s.original_language||'').toUpperCase()+'</span>' +
+          '</div>' +
+          '<div>'+genres+'</div>' +
+          '<div class="overview">'+(s.overview||'Aucune description.')+'</div>' +
+        '</div></div>';
+    }).join('');
+  }
+</script>
+</body>
+</html>
