@@ -6,7 +6,7 @@ Projet d’analyse de films avec la stack ELK.
 - Elasticsearch
 - Logstash
 - Kibana
-- Docker Compose
+- Docker Compose 
 
 ## Objectif
 - démarrer la stack ELK localement

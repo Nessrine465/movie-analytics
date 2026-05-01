@@ -5,5 +5,5 @@ logs/
 __pycache__/
 *.pyc
 node_modules/
-DATA/movies.csv
+DATA/movies.csv 
 
